@@ -1,12 +1,35 @@
 using System.Net;
 using System.Net.Sockets;
 
-Console.Write("$ ");
+namespace CommandParser {
+    public class CommandParser {
+        public void run() {
+            while (true)
+            {
+               PrintUserInputLine();
+               HandleUserInput(); 
+            } 
+        }
 
-// Wait for user input
-var userInputCommand = Console.ReadLine();
-Console.WriteLine(ParseCommand(userInputCommand));
+        private void PrintUserInputLine() {
+            Console.Write("$ ");
+        }
 
-string ParseCommand(string? command) {
-    return $"{command}: command not found";
+        private void HandleUserInput() {
+            // Wait for user input
+            var userInputCommand = Console.ReadLine();
+            Console.WriteLine(ParseCommand(userInputCommand));
+        }
+        
+        private string ParseCommand(string? command) {
+            return $"{command}: command not found";
+        }
+    }
+
+    class Program {
+        static void Main(string[] args) {
+           var parser = new CommandParser();
+           parser.run();
+        }
+    }
 }
