@@ -18,6 +18,7 @@ public class CommandRegistry {
     public void ExecuteCommand(string commandWord, string args) {
         if (!IsValidCommand(commandWord)) {
             HandleCommandNotFound(commandWord);
+            return;
         }
         
         var command = _commands[commandWord];
