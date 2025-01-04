@@ -9,7 +9,7 @@ namespace CommandParser {
             while (true) {
                 PrintUserInputLine();
                 HandleUserInput(); 
-            } 
+            }
         }
 
         private static void PrintUserInputLine() {
