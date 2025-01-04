@@ -7,7 +7,7 @@ public class TypeCommand(CommandRegistry commandRegistry) : ICommand {
         if (_commandRegistry.IsValidCommand(args)) {
             Console.WriteLine($"{args} is a shell builtin");
         } else {
-            Console.WriteLine("invalid_command: not found");
+            Console.WriteLine($"{args}: not found");
         }
     }
 }
