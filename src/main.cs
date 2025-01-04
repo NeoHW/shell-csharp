@@ -3,15 +3,14 @@ using System.Net.Sockets;
 
 namespace CommandParser {
     public class CommandParser {
-        public void run() {
-            while (true)
-            {
+        public void Run() {
+            while (true) {
                PrintUserInputLine();
                HandleUserInput(); 
             } 
         }
 
-        private void PrintUserInputLine() {
+        private static void PrintUserInputLine() {
             Console.Write("$ ");
         }
 
@@ -29,7 +28,7 @@ namespace CommandParser {
     class Program {
         static void Main(string[] args) {
            var parser = new CommandParser();
-           parser.run();
+           parser.Run();
         }
     }
 }
