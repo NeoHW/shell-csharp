@@ -5,4 +5,4 @@ Console.Write("$ ");
 
 // Wait for user input
 String userInputCommand = Console.ReadLine();
-Console.WriteLine($"{userInputCommand}, command not found");
+Console.WriteLine($"{userInputCommand}: command not found");
