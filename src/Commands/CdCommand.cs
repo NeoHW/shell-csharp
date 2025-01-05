@@ -12,7 +12,7 @@ public class CdCommand : ICommand
         {
             if (e is DirectoryNotFoundException or FileNotFoundException)
             {
-                Console.WriteLine("cd: {args}: No such file or directory");
+                Console.WriteLine($"cd: {args}: No such file or directory");
             }
             else
                 throw;
