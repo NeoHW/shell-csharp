@@ -35,7 +35,7 @@ public class CommandRegistry
     {
         string[] parts = userInput.Split(" ", 2);
         var executable = parts[0];
-        var args = parts.Length > 1 ? parts[2] : string.Empty;
+        var args = parts.Length > 1 ? parts[1] : string.Empty;
         
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
