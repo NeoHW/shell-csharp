@@ -31,7 +31,7 @@ public class CommandRegistry
         return _commands.ContainsKey(commandWord);
     }
 
-    public void ExecuteExternalProgramCommand(string userInput)
+    public bool ExecuteExternalProgramCommand(string userInput)
     {
         string[] parts = userInput.Split(" ", 2);
         var executable = parts[0];
@@ -40,18 +40,13 @@ public class CommandRegistry
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
         {
-            Console.WriteLine($"{executable} not found");
-            return;
+            return false;
         }
         
         using var process = new Process();
         process.StartInfo.FileName = executable;
         process.StartInfo.Arguments = args;
         process.Start();
-    }
-
-    private static void HandleCommandNotFound(string commandWord)
-    {
-        Console.WriteLine($"{commandWord}: command not found");
+        return true;
     }
 }

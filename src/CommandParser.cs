@@ -34,7 +34,8 @@ public class CommandParser
         }
         else
         {
-            _commandRegistry.ExecuteExternalProgramCommand(userInput);
+            bool executionResult = _commandRegistry.ExecuteExternalProgramCommand(userInput);
+            HandleExecutionResult(executionResult, userInput);
         }
     }
 
@@ -44,5 +45,18 @@ public class CommandParser
         var commandWord = parts.Length > 0 ? parts[0] : string.Empty;
         var args = parts.Length > 1 ? parts[1] : string.Empty;
         return (commandWord, args);
+    }
+
+    private static void HandleExecutionResult(bool executionResult, string userInput)
+    {
+        if (!executionResult)
+        {
+            HandleCommandNotFound(userInput);
+        }
+    }
+    
+    private static void HandleCommandNotFound(string commandWord)
+    {
+        Console.WriteLine($"{commandWord}: command not found");
     }
 }
