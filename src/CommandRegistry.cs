@@ -8,7 +8,8 @@ public class CommandRegistry
     private const string ExitCommand = "exit";
     private const string EchoCommand = "echo";
     private const string TypeCommand = "type";
-    private const string PwdCommand = "pwd";
+    private const string PwdCommand = "pwd"; 
+    private const string CdCommand = "cd"; 
     private readonly Dictionary<string, ICommand> _commands;
 
     public CommandRegistry()
