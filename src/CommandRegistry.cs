@@ -19,7 +19,8 @@ public class CommandRegistry
             { ExitCommand, new ExitCommand() },
             { EchoCommand, new EchoCommand() },
             { TypeCommand, new TypeCommand(this) }, // Pass itself (Dependency Injection)
-            { PwdCommand, new PwdCommand() }
+            { PwdCommand, new PwdCommand() },
+            { CdCommand, new CdCommand() }
         };
     }
 
