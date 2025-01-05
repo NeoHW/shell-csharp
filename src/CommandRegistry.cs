@@ -34,7 +34,7 @@ public class CommandRegistry
         return _commands.ContainsKey(commandWord);
     }
 
-    public void HandleCommandNotFound(string commandWord)
+    private static void HandleCommandNotFound(string commandWord)
     {
         Console.WriteLine($"{commandWord}: command not found");
     }
