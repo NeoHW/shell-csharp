@@ -28,7 +28,14 @@ public class CommandParser
         }
 
         var (commandWord, args) = ExtractCommandAndArgs(userInput);
-        _commandRegistry.ExecuteCommand(commandWord, args);
+        if (_commandRegistry.IsShellBuiltInCommand(commandWord))
+        {
+            _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
+        }
+        else
+        {
+            _commandRegistry.ExecuteExternalProgramCommand(userInput);
+        }
     }
 
     private (string commandWord, string args) ExtractCommandAndArgs(string command)

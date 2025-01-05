@@ -1,3 +1,6 @@
+using CommandParserApp.Utilities;
+using System.Diagnostics;
+
 namespace CommandParserApp;
 
 public class CommandRegistry
@@ -17,21 +20,34 @@ public class CommandRegistry
         };
     }
 
-    public void ExecuteCommand(string commandWord, string args)
+    public void ExecuteShellBuiltInCommand(string commandWord, string args)
     {
-        if (!IsValidCommand(commandWord))
-        {
-            HandleCommandNotFound(commandWord);
-            return;
-        }
-
-        var command = _commands[commandWord];
-        command.Execute(args);
+            var command = _commands[commandWord];
+            command.Execute(args);
     }
 
-    public bool IsValidCommand(string commandWord)
+    public bool IsShellBuiltInCommand(string commandWord)
     {
         return _commands.ContainsKey(commandWord);
+    }
+
+    public void ExecuteExternalProgramCommand(string userInput)
+    {
+        string[] parts = userInput.Split(" ", 2);
+        var executable = parts[0];
+        var args = parts.Length > 1 ? parts[2] : string.Empty;
+        
+        string? executablePath = PathResolver.FindExecutableInPath(executable);
+        if (executablePath == null)
+        {
+            Console.WriteLine($"{executable} not found");
+            return;
+        }
+        
+        using var process = new Process();
+        process.StartInfo.FileName = executable;
+        process.StartInfo.Arguments = args;
+        process.Start();
     }
 
     private static void HandleCommandNotFound(string commandWord)
