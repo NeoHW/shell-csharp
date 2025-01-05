@@ -8,6 +8,7 @@ public class CommandRegistry
     private const string ExitCommand = "exit";
     private const string EchoCommand = "echo";
     private const string TypeCommand = "type";
+    private const string PwdCommand = " pwd";
     private readonly Dictionary<string, ICommand> _commands;
 
     public CommandRegistry()
@@ -16,7 +17,8 @@ public class CommandRegistry
         {
             { ExitCommand, new ExitCommand() },
             { EchoCommand, new EchoCommand() },
-            { TypeCommand, new TypeCommand(this) } // Pass itself (Dependency Injection)
+            { TypeCommand, new TypeCommand(this) }, // Pass itself (Dependency Injection)
+            { PwdCommand, new PwdCommand() }
         };
     }
 
