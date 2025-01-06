@@ -47,8 +47,21 @@ public class CommandRegistry
         
         using var process = new Process();
         process.StartInfo.FileName = executable;
-        process.StartInfo.Arguments = string.Join(" ", args);
+        process.StartInfo.Arguments = PrepareArguments(args);
         process.Start();
         return true;
+    }
+    
+    private string PrepareArguments(List<string> args)
+    {
+        return string.Join(" ", args.Select(QuoteArgument));
+    }
+    
+    /// <summary>
+    /// Encloses an argument in double quotes if it contains spaces or special characters, ensuring it is treated as a single unit.
+    /// </summary>   
+    private string QuoteArgument(string argument)
+    {
+        return argument.Contains(' ') ? $"\"{argument}\"" : argument;
     }
 }

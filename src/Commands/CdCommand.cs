@@ -4,9 +4,9 @@ public class CdCommand : ICommand
 {
     public void Execute(List<string> args)
     {
+        string directoryPath = args[0];
         try
         {
-            string directoryPath = args[0];
             string targetDirectory = ResolveTargetDirectory(directoryPath);
             Directory.SetCurrentDirectory(targetDirectory);
         }
@@ -14,7 +14,7 @@ public class CdCommand : ICommand
         {
             if (e is DirectoryNotFoundException or FileNotFoundException)
             {
-                Console.WriteLine($"cd: {args}: No such file or directory");
+                Console.WriteLine($"cd: {directoryPath}: No such file or directory");
             }
             else
                 throw;
