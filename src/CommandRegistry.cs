@@ -52,16 +52,12 @@ public class CommandRegistry
         return true;
     }
     
-    private string PrepareArguments(List<string> args)
-    {
-        return string.Join(" ", args.Select(QuoteArgument));
-    }
-    
     /// <summary>
     /// Encloses an argument in double quotes if it contains spaces or special characters, ensuring it is treated as a single unit.
     /// </summary>   
-    private string QuoteArgument(string argument)
+    private string PrepareArguments(List<string> args)
     {
-        return argument.Contains(' ') ? $"\"{argument}\"" : argument;
+        return string.Join(" ", args.Select(arg => $"\"{arg}\""));
     }
+
 }
