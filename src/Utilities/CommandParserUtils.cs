@@ -22,14 +22,13 @@ public static class CommandParserUtils
         List<string> args = new();
         var currentWord = string.Empty;
         var inSingleQuote = false;
-        var inDoubleQuote = false;
 
         foreach (var c in userInput)
         {
             switch (c)
             {
                 case Whitespace:
-                    HandleWhitespace(ref currentWord, ref args, ref inSingleQuote, ref inDoubleQuote);
+                    HandleWhitespace(ref currentWord, ref args, ref inSingleQuote);
                     break;
 
                 case SingleQuote:
@@ -47,7 +46,7 @@ public static class CommandParserUtils
         return args;
     }
 
-    private static void HandleWhitespace(ref string currentWord, ref List<string> args, ref bool inSingleQuote, ref bool inDoubleQuote)
+    private static void HandleWhitespace(ref string currentWord, ref List<string> args, ref bool inSingleQuote)
     {
         if (inSingleQuote)
         {
@@ -66,11 +65,9 @@ public static class CommandParserUtils
 
     private static void AddRemainingWord(ref string currentWord, ref List<string> args)
     {
-        if (!string.IsNullOrEmpty(currentWord))
-        {
-            args.Add(currentWord);
-            currentWord = string.Empty;
-        }
+        if (string.IsNullOrEmpty(currentWord)) return;
+        args.Add(currentWord);
+        currentWord = string.Empty;
     }
 
     private static string ExtractCommandWordFromArgs(List<string> args)
