@@ -4,6 +4,9 @@ namespace CommandParserApp.Utilities;
 
 public static class CommandParserUtils
 {
+    const char Whitespace = ' ';
+    const char SingleQuote = '\'';
+
     public static (string commandWord, List<string> args) ExtractCommandAndArgs(string userInput)
     {
         ArgumentNullException.ThrowIfNull(userInput);
@@ -16,13 +19,58 @@ public static class CommandParserUtils
 
     private static List<string> ParseArguments(string userInput)
     {
-        var regex = new Regex(@"'([^']*)'|(\S+)", RegexOptions.Compiled);
+        List<string> args = new();
+        var currentWord = string.Empty;
+        var inSingleQuote = false;
+        var inDoubleQuote = false;
 
-        var matches = regex.Matches(userInput);
-        return matches
-            .Select(match => match.Groups[1].Success ? match.Groups[1].Value
-                                                     : match.Groups[2].Value)
-            .ToList();
+        foreach (var c in userInput)
+        {
+            switch (c)
+            {
+                case Whitespace:
+                    HandleWhitespace(ref currentWord, ref args, ref inSingleQuote, ref inDoubleQuote);
+                    break;
+
+                case SingleQuote:
+                    HandleSingleQuote(ref inSingleQuote);
+                    break;
+
+                default:
+                    currentWord += c;
+                    break;
+            }
+        }
+
+        AddRemainingWord(ref currentWord, ref args);
+
+        return args;
+    }
+
+    private static void HandleWhitespace(ref string currentWord, ref List<string> args, ref bool inSingleQuote, ref bool inDoubleQuote)
+    {
+        if (inSingleQuote)
+        {
+            currentWord += Whitespace; 
+        }
+        else
+        {
+            AddRemainingWord(ref currentWord, ref args);
+        }
+    }
+
+    private static void HandleSingleQuote(ref bool inSingleQuote)
+    {
+        inSingleQuote = !inSingleQuote; 
+    }
+
+    private static void AddRemainingWord(ref string currentWord, ref List<string> args)
+    {
+        if (!string.IsNullOrEmpty(currentWord))
+        {
+            args.Add(currentWord);
+            currentWord = string.Empty;
+        }
     }
 
     private static string ExtractCommandWordFromArgs(List<string> args)
@@ -30,7 +78,7 @@ public static class CommandParserUtils
         if (args.Count == 0) return string.Empty;
 
         var commandWord = args[0];
-        args.RemoveAt(0); // Remove the command word from the arguments
+        args.RemoveAt(0); 
         return commandWord;
     }
 }
