@@ -6,7 +6,8 @@ public class CdCommand : ICommand
     {
         try
         {
-            Directory.SetCurrentDirectory(args);
+            string targetDirectory = ResolveTargetDirectory(args);
+            Directory.SetCurrentDirectory(targetDirectory);
         }
         catch (Exception e)
         {
@@ -16,6 +17,23 @@ public class CdCommand : ICommand
             }
             else
                 throw;
-        }
+        }  
     }
+
+    private static string ResolveTargetDirectory(string args)
+    {
+        if (string.IsNullOrEmpty(args))
+        {
+            throw new ArgumentException("cd: missing arguments");
+        }
+        
+        return IsAbsolutePath(args) 
+            ? args 
+            : Path.GetFullPath(args, Directory.GetCurrentDirectory());
+    }
+    
+    private static bool IsAbsolutePath(string path)
+    {
+        return Path.IsPathRooted(path);
+    } 
 }
