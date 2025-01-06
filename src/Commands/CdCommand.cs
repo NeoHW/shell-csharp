@@ -26,6 +26,11 @@ public class CdCommand : ICommand
         {
             throw new ArgumentException("cd: missing arguments");
         }
+
+        if (args.StartsWith('~'))
+        {
+            return Environment.GetEnvironmentVariable("HOME");
+        }
         
         return IsAbsolutePath(args) 
             ? args 
