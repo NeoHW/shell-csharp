@@ -2,11 +2,12 @@ namespace CommandParserApp;
 
 public class CdCommand : ICommand
 {
-    public void Execute(string args)
+    public void Execute(List<string> args)
     {
         try
         {
-            string targetDirectory = ResolveTargetDirectory(args);
+            string directoryPath = args[0];
+            string targetDirectory = ResolveTargetDirectory(directoryPath);
             Directory.SetCurrentDirectory(targetDirectory);
         }
         catch (Exception e)
@@ -20,21 +21,21 @@ public class CdCommand : ICommand
         }  
     }
 
-    private static string ResolveTargetDirectory(string args)
+    private static string ResolveTargetDirectory(string directoryPath)
     {
-        if (string.IsNullOrEmpty(args))
+        if (string.IsNullOrEmpty(directoryPath))
         {
             throw new ArgumentException("cd: missing arguments");
         }
 
-        if (args.StartsWith('~'))
+        if (directoryPath.StartsWith('~'))
         {
             return Environment.GetEnvironmentVariable("HOME");
         }
         
-        return IsAbsolutePath(args) 
-            ? args 
-            : Path.GetFullPath(args, Directory.GetCurrentDirectory());
+        return IsAbsolutePath(directoryPath) 
+            ? directoryPath 
+            : Path.GetFullPath(directoryPath, Directory.GetCurrentDirectory());
     }
     
     private static bool IsAbsolutePath(string path)

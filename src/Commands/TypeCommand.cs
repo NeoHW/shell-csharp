@@ -4,22 +4,24 @@ namespace CommandParserApp;
 
 public class TypeCommand(CommandRegistry commandRegistry) : ICommand
 {
-    public void Execute(string args)
+    public void Execute(List<string> args)
     {
-        if (commandRegistry.IsShellBuiltInCommand(args))
+        var commandToCheck = args[0];
+        
+        if (commandRegistry.IsShellBuiltInCommand(commandToCheck))
         {
-            Console.WriteLine($"{args} is a shell builtin");
+            Console.WriteLine($"{commandToCheck} is a shell builtin");
         }
         else
         {
-            string? executablePath = PathResolver.FindExecutableInPath(args);
+            string? executablePath = PathResolver.FindExecutableInPath(commandToCheck);
             if (executablePath != null)
             {
-                Console.WriteLine($"{args} is {executablePath}");
+                Console.WriteLine($"{commandToCheck} is {executablePath}");
             }
             else
             {
-                Console.WriteLine($"{args}: not found");
+                Console.WriteLine($"{commandToCheck}: not found");
             }
         }
     }

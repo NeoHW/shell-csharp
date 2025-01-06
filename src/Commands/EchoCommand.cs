@@ -2,8 +2,8 @@ namespace CommandParserApp;
 
 public class EchoCommand : ICommand
 {
-    public void Execute(string args)
+    public void Execute(List<string> args)
     {
-        Console.WriteLine(args);
+        Console.WriteLine(string.Join(" ", args));
     }
 }

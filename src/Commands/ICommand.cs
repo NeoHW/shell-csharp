@@ -2,5 +2,5 @@ namespace CommandParserApp;
 
 public interface ICommand
 {
-    void Execute(string args);
+    void Execute(List<string> args);
 }

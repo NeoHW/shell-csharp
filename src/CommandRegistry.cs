@@ -24,7 +24,7 @@ public class CommandRegistry
         };
     }
 
-    public void ExecuteShellBuiltInCommand(string commandWord, string args)
+    public void ExecuteShellBuiltInCommand(string commandWord, List<string> args)
     {
             var command = _commands[commandWord];
             command.Execute(args);
@@ -37,9 +37,7 @@ public class CommandRegistry
 
     public bool ExecuteExternalProgramCommand(string userInput)
     {
-        string[] parts = userInput.Split(" ", 2);
-        var executable = parts[0];
-        var args = parts.Length > 1 ? parts[1] : string.Empty;
+        var (executable, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
         
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
@@ -49,7 +47,7 @@ public class CommandRegistry
         
         using var process = new Process();
         process.StartInfo.FileName = executable;
-        process.StartInfo.Arguments = args;
+        process.StartInfo.Arguments = string.Join(" ", args);
         process.Start();
         return true;
     }

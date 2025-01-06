@@ -1,3 +1,5 @@
+using CommandParserApp.Utilities;
+
 namespace CommandParserApp;
 
 public class CommandParser
@@ -27,7 +29,7 @@ public class CommandParser
             return;
         }
 
-        var (commandWord, args) = ExtractCommandAndArgs(userInput);
+        var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
         if (_commandRegistry.IsShellBuiltInCommand(commandWord))
         {
             _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
@@ -37,14 +39,6 @@ public class CommandParser
             bool executionResult = _commandRegistry.ExecuteExternalProgramCommand(userInput);
             HandleExecutionResult(executionResult, userInput);
         }
-    }
-
-    private (string commandWord, string args) ExtractCommandAndArgs(string command)
-    {
-        var parts = command.Split(" ", 2);
-        var commandWord = parts.Length > 0 ? parts[0] : string.Empty;
-        var args = parts.Length > 1 ? parts[1] : string.Empty;
-        return (commandWord, args);
     }
 
     private static void HandleExecutionResult(bool executionResult, string userInput)
