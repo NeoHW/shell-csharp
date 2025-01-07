@@ -6,6 +6,13 @@ public static class CommandParserUtils
 {
     const char Whitespace = ' ';
     const char SingleQuote = '\'';
+    const char DoubleQuote = '"';
+    const char Backslash = '\\';
+
+    private static string _currentWord = string.Empty;
+    private static bool _inSingleQuote;
+    private static bool _inDoubleQuote;
+    private static bool _hasBackslash;
 
     public static (string commandWord, List<string> args) ExtractCommandAndArgs(string userInput)
     {
@@ -20,54 +27,112 @@ public static class CommandParserUtils
     private static List<string> ParseArguments(string userInput)
     {
         List<string> args = new();
-        var currentWord = string.Empty;
-        var inSingleQuote = false;
 
         foreach (var c in userInput)
         {
             switch (c)
             {
                 case Whitespace:
-                    HandleWhitespace(ref currentWord, ref args, ref inSingleQuote);
+                    HandleWhitespace(ref args);
                     break;
 
                 case SingleQuote:
-                    HandleSingleQuote(ref inSingleQuote);
+                    HandleSingleQuote();
+                    break;
+                
+                case DoubleQuote:
+                    HandleDoubleQuote();
+                    break;
+                
+                case Backslash:
+                    HandleBackSlash();
                     break;
 
                 default:
-                    currentWord += c;
+                    HandleDefaultChar(c);
                     break;
             }
         }
 
-        AddRemainingWord(ref currentWord, ref args);
+        AddRemainingWord(ref args);
 
         return args;
     }
 
-    private static void HandleWhitespace(ref string currentWord, ref List<string> args, ref bool inSingleQuote)
+    private static void HandleWhitespace(ref List<string> args)
     {
-        if (inSingleQuote)
+        if (_hasBackslash && _inDoubleQuote)
         {
-            currentWord += Whitespace; 
+            _currentWord += Backslash;
+        }
+        
+        if (_hasBackslash || _inSingleQuote || _inDoubleQuote)
+        {
+            _currentWord += Whitespace; 
         }
         else
         {
-            AddRemainingWord(ref currentWord, ref args);
+            AddRemainingWord(ref args);
+        }
+        
+        _hasBackslash = false;
+    }
+
+    private static void HandleSingleQuote()
+    {
+        if (_inDoubleQuote)
+        {
+           _currentWord += SingleQuote; 
+        }
+        else
+        {
+            _inSingleQuote = !_inSingleQuote; 
+        }
+    }
+    
+    private static void HandleDoubleQuote()
+    {
+        if (_inSingleQuote || _hasBackslash)
+        {
+            _currentWord += DoubleQuote;
+        }
+        else
+        {
+            _inDoubleQuote = !_inDoubleQuote;
+        }
+        
+        _hasBackslash = false;
+    }
+
+    private static void HandleBackSlash()
+    {
+        if (_hasBackslash || _inSingleQuote)
+        {
+            _currentWord += Backslash;
+            _hasBackslash = false;
+        }
+        else
+        {
+            _hasBackslash = true;
         }
     }
 
-    private static void HandleSingleQuote(ref bool inSingleQuote)
+    private static void HandleDefaultChar(char c)
     {
-        inSingleQuote = !inSingleQuote; 
+        if (_hasBackslash && _inDoubleQuote)
+        {
+            _currentWord += Backslash;
+        }
+        
+        _currentWord += c;
+        _hasBackslash = false;
     }
 
-    private static void AddRemainingWord(ref string currentWord, ref List<string> args)
+    private static void AddRemainingWord(ref List<string> args)
     {
-        if (string.IsNullOrEmpty(currentWord)) return;
-        args.Add(currentWord);
-        currentWord = string.Empty;
+        if (string.IsNullOrEmpty(_currentWord)) return;
+        args.Add(_currentWord);
+        _currentWord = string.Empty;
     }
 
     private static string ExtractCommandWordFromArgs(List<string> args)

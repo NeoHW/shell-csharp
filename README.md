@@ -1,34 +1,122 @@
-[![progress-banner](https://backend.codecrafters.io/progress/shell/95a0096e-79c7-41b3-ab79-5d55f1ec73ff)](https://app.codecrafters.io/users/codecrafters-bot?r=2qF)
+# Custom Shell in C#
 
-This is a starting point for C# solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+This repository implements a custom shell in C# inspired by bash/zsh, adhering to clean coding practices. The shell includes essential functionalities like command execution, navigation, quoting, and redirection.
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+## Features
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+### Core Functionalities
 
-# Passing the first stage
+- **Print a prompt**: Displays a customizable shell prompt to the user.
+- **Handle invalid commands**: Gracefully handles unrecognized commands with appropriate error messages.
+- **REPL (Read-Eval-Print Loop)**: Implements an interactive loop for continuous command execution.
+- **The exit builtin**: Allows the user to exit the shell.
 
-The entry point for your `shell` implementation is in `src/main.cs`. Study and
-uncomment the relevant code, and push your changes to pass the first stage:
+### Built-in Commands
 
-```sh
-git commit -am "pass 1st stage" # any msg
-git push origin master
+#### `echo`
+- Repeats the arguments provided.
+- Supports quoting for spaces and special characters.
+
+#### `type`
+- **Builtins**: Identifies and displays shell built-in commands.
+- **Executable files**: Checks and displays information about executable files in the user's PATH.
+
+### Running External Programs
+
+- Executes programs and handles errors for missing or inaccessible executables.
+
+### Navigation
+
+#### `pwd`
+- Prints the current working directory.
+
+#### `cd`
+- **Absolute paths**: Navigates to directories using absolute paths.
+- **Relative paths**: Navigates using paths relative to the current directory.
+- **Home directory**: Supports `cd` without arguments to navigate to the user's home directory.
+
+### Quoting
+
+- **Single quotes**: Preserves the literal value of all characters within the quotes.
+- **Double quotes**: Allows interpolation of variables and special characters.
+- **Backslash outside quotes**: Escapes the next character.
+- **Backslash within quotes**:
+   - **Within single quotes**: Treated literally.
+   - **Within double quotes**: Escapes special characters like `"` and `$`.
+
+#### Executing a Quoted Executable
+- Handles execution of commands where the executable name is quoted.
+
+### Redirection
+
+- **Redirect stdout**: Supports `>` to redirect standard output to a file.
+- **Redirect stderr**: Supports `2>` to redirect standard error to a file.
+- **Append stdout**: Supports `>>` to append standard output to a file.
+- **Append stderr**: Supports `2>>` to append standard error to a file.
+
+## Code Structure
+
+The shell is designed following clean coding principles:
+
+- **Modular Architecture**: Each feature is implemented in its own module/class.
+- **Error Handling**: Gracefully handles all edge cases, providing meaningful error messages.
+- **Testing**: Includes unit tests for all core functionalities.
+- **Code Documentation**: Clear inline comments and XML documentation for all methods.
+
+## Installation
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/your-username/custom-shell-csharp.git
+   cd custom-shell-csharp
+   ```
+2. Build the project using .NET:
+   ```bash
+   dotnet build
+   ```
+3. Run the shell:
+   ```bash
+   dotnet run
+   ```
+
+## Usage
+
+Once the shell is running, you can use the following commands:
+
+- `pwd`: Prints the current directory.
+- `cd [directory]`: Navigates to the specified directory.
+- `echo [arguments]`: Prints the arguments.
+- `type [command]`: Displays information about the command.
+- Redirect output or error streams with `>`, `2>`, `>>`, `2>>`.
+
+## Examples
+
+### Navigation
+```bash
+> pwd
+/home/user
+> cd /tmp
+> pwd
+/tmp
 ```
 
-Time to move on to the next stage!
+### Quoting
+```bash
+> echo "Hello, World!"
+Hello, World!
+> echo 'Single quoted: \n'
+Single quoted: \n
+> echo "Backslash: \n"
+Backslash:
+```
 
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `dotnet (9.0)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `src/main.cs`.
-1. Commit your changes and run `git push origin master` to submit your solution
-   to CodeCrafters. Test output will be streamed to your terminal.
+### Redirection
+```bash
+> echo "Hello" > file.txt
+> cat file.txt
+Hello
+> echo "Append this" >> file.txt
+> cat file.txt
+Hello
+Append this
+```
