@@ -51,19 +51,29 @@ public class CommandRegistry
             return false;
         }
         
-        using var process = new Process();
-        process.StartInfo.FileName = executable;
-        process.StartInfo.Arguments = PrepareArguments(args);
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = executable,
+            Arguments = string.Join(" ", args),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+        
+        using var process = new Process { StartInfo = startInfo };
         process.Start();
+        
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+
+        process.WaitForExit();
+
+        if (!string.IsNullOrEmpty(output))
+            Console.Write(output);
+        if (!string.IsNullOrEmpty(error))
+            Console.Write(error);
+        
         return true;
     }
-    
-    /// <summary>
-    /// Encloses an argument in double quotes if it contains spaces or special characters, ensuring it is treated as a single unit.
-    /// </summary>   
-    private string PrepareArguments(List<string?> args)
-    {
-        return string.Join(" ", args.Select(arg => $"\"{arg}\""));
-    }
-
 }
