@@ -2,12 +2,12 @@ namespace CommandParserApp;
 
 public class CdCommand : ICommand
 {
-    public void Execute(List<string> args)
+    public void Execute(List<string?> args)
     {
-        string directoryPath = args[0];
+        string? directoryPath = args[0];
         try
         {
-            string targetDirectory = ResolveTargetDirectory(directoryPath);
+            string? targetDirectory = ResolveTargetDirectory(directoryPath);
             Directory.SetCurrentDirectory(targetDirectory);
         }
         catch (Exception e)
@@ -21,7 +21,7 @@ public class CdCommand : ICommand
         }  
     }
 
-    private static string ResolveTargetDirectory(string directoryPath)
+    private static string? ResolveTargetDirectory(string? directoryPath)
     {
         if (string.IsNullOrEmpty(directoryPath))
         {
@@ -38,7 +38,7 @@ public class CdCommand : ICommand
             : Path.GetFullPath(directoryPath, Directory.GetCurrentDirectory());
     }
     
-    private static bool IsAbsolutePath(string path)
+    private static bool IsAbsolutePath(string? path)
     {
         return Path.IsPathRooted(path);
     } 

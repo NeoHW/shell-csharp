@@ -9,12 +9,12 @@ public static class CommandParserUtils
     const char DoubleQuote = '"';
     const char Backslash = '\\';
 
-    private static string _currentWord = string.Empty;
+    private static string? _currentWord = string.Empty;
     private static bool _inSingleQuote;
     private static bool _inDoubleQuote;
     private static bool _hasBackslash;
 
-    public static (string commandWord, List<string> args) ExtractCommandAndArgs(string userInput)
+    public static (string commandWord, List<string?> args) ExtractCommandAndArgs(string userInput)
     {
         ArgumentNullException.ThrowIfNull(userInput);
 
@@ -24,9 +24,9 @@ public static class CommandParserUtils
         return (commandWord, args);
     }
 
-    private static List<string> ParseArguments(string userInput)
+    private static List<string?> ParseArguments(string userInput)
     {
-        List<string> args = new();
+        List<string?> args = new();
 
         foreach (var c in userInput)
         {
@@ -59,7 +59,7 @@ public static class CommandParserUtils
         return args;
     }
 
-    private static void HandleWhitespace(ref List<string> args)
+    private static void HandleWhitespace(ref List<string?> args)
     {
         if (_hasBackslash && _inDoubleQuote)
         {
@@ -134,14 +134,14 @@ public static class CommandParserUtils
         _hasBackslash = false;
     }
 
-    private static void AddRemainingWord(ref List<string> args)
+    private static void AddRemainingWord(ref List<string?> args)
     {
         if (string.IsNullOrEmpty(_currentWord)) return;
         args.Add(_currentWord);
         _currentWord = string.Empty;
     }
 
-    private static string ExtractCommandWordFromArgs(List<string> args)
+    private static string? ExtractCommandWordFromArgs(List<string?> args)
     {
         if (args.Count == 0) return string.Empty;
 

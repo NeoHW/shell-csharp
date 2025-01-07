@@ -4,7 +4,7 @@ namespace CommandParserApp;
 
 public class TypeCommand(CommandRegistry commandRegistry) : ICommand
 {
-    public void Execute(List<string> args)
+    public void Execute(List<string?> args)
     {
         var commandToCheck = args[0];
         

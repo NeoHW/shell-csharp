@@ -2,7 +2,7 @@ namespace CommandParserApp.Utilities;
 
 public static class PathResolver
 {
-    public static string? FindExecutableInPath(string executableName)
+    public static string? FindExecutableInPath(string? executableName)
     {
         // Search for command in directories listed in Shell Path
         string? pathEnv = Environment.GetEnvironmentVariable("PATH");
