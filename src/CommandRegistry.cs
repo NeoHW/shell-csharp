@@ -41,6 +41,7 @@ public class CommandRegistry
     {
         return commandWord != CatCommand && _commands.ContainsKey(commandWord);
     }
+    
     public bool ExecuteExternalProgramCommand(string userInput)
     {
         var (executable, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);

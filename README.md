@@ -1,6 +1,6 @@
-# Custom Shell in C#
+# A Zsh-like Shell written in C#
 
-This repository implements a custom shell in C# inspired by bash/zsh, adhering to clean coding practices. The shell includes essential functionalities like command execution, navigation, quoting, and redirection.
+This repository implements a custom shell in C# inspired by zsh, adhering to clean coding practices. The shell includes essential functionalities like command execution, navigation, quoting, and redirection.
 
 ## Features
 
@@ -33,7 +33,7 @@ This repository implements a custom shell in C# inspired by bash/zsh, adhering t
 #### `cd`
 - **Absolute paths**: Navigates to directories using absolute paths.
 - **Relative paths**: Navigates using paths relative to the current directory.
-- **Home directory**: Supports `cd` without arguments to navigate to the user's home directory.
+- **Home directory**: Navigates to the user's home directory.
 
 ### Quoting
 
@@ -58,10 +58,8 @@ This repository implements a custom shell in C# inspired by bash/zsh, adhering t
 
 The shell is designed following clean coding principles:
 
-- **Modular Architecture**: Each feature is implemented in its own module/class.
-- **Error Handling**: Gracefully handles all edge cases, providing meaningful error messages.
-- **Testing**: Includes unit tests for all core functionalities.
-- **Code Documentation**: Clear inline comments and XML documentation for all methods.
+- **Modular Architecture**: Makes use of the Command Architecture Pattern
+- **Error Handling**: Gracefully handles edge cases, providing meaningful error messages.
 
 ## Installation
 
