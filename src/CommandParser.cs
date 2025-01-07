@@ -30,7 +30,7 @@ public class CommandParser
         }
 
         var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
-        if (_commandRegistry.IsShellBuiltInCommand(commandWord))
+        if (_commandRegistry.IsInCommandRegistry(commandWord))
         {
             _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
         }

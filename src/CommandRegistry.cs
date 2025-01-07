@@ -32,11 +32,15 @@ public class CommandRegistry
             command.Execute(args);
     }
 
-    public bool IsShellBuiltInCommand(string? commandWord)
+    public bool IsInCommandRegistry(string? commandWord)
     {
         return _commands.ContainsKey(commandWord);
     }
-
+    
+    public bool IsShellBuiltInCommand(string? commandWord)
+    {
+        return commandWord != CatCommand && _commands.ContainsKey(commandWord);
+    }
     public bool ExecuteExternalProgramCommand(string userInput)
     {
         var (executable, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
