@@ -80,7 +80,12 @@ public static class CommandParserUtils
 
     private static void HandleSingleQuote()
     {
-        if (_inDoubleQuote)
+        if (_hasBackslash && _inDoubleQuote)
+        {
+            _currentWord += Backslash;
+        }
+        
+        if (_hasBackslash || _inDoubleQuote)
         {
            _currentWord += SingleQuote; 
         }
@@ -88,6 +93,7 @@ public static class CommandParserUtils
         {
             _inSingleQuote = !_inSingleQuote; 
         }
+        _hasBackslash = false;
     }
     
     private static void HandleDoubleQuote()
