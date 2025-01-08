@@ -58,13 +58,15 @@ public class CommandParser
         for (int i = 0; i < args.Count; ++i)
         {
             var operatorType = args[i];
-            if (operatorType is "1>" or ">" or "2>")
+            bool isErrorStream = operatorType is "2>" or "2>>";
+            bool isAppendMode = operatorType is ">>" or "1>>" or "2>>";
+            
+            if (operatorType is "1>" or ">" or ">>" or "1>>" or "2>" or "2>>")
             {
-                var isErrorRedirection = operatorType == "2>";
                 if (i + 1 < args.Count && args[i + 1] != null)
                 {
                     var targetFile = args[i + 1]!;
-                    RedirectStream(targetFile, isErrorRedirection);
+                    RedirectStream(targetFile, isErrorStream, isAppendMode);
                     RemoveOperatorAndFileName(args, i);
                 }
                 else
@@ -75,11 +77,14 @@ public class CommandParser
         }
     }
 
-    private void RedirectStream(string targetFile, bool isErrorStream)
+    private void RedirectStream(string targetFile, bool isErrorStream, bool isAppendMode)
     {
         try
         {
-            var outputEngine = new FileOutputEngine(targetFile);
+            var outputEngine = isAppendMode
+                ? new FileOutputEngine(targetFile, append: true)
+                : new FileOutputEngine(targetFile, append: false);
+            
             if (isErrorStream)
             {
                 _currentOutputErrorEngine = outputEngine;
