@@ -5,29 +5,38 @@ namespace CommandParserApp;
 public class CommandParser
 {
     private readonly CommandRegistry _commandRegistry = new();
-    private readonly IOutputEngine _outputEngine;
+    private readonly IOutputEngine _defaultOutputEngine;
+    private IOutputEngine _currentOutputEngine;
 
-    public CommandParser(IOutputEngine outputEngine)
+    public CommandParser(IOutputEngine defaultOutputEngine)
     {
-        _outputEngine = outputEngine;
+        _defaultOutputEngine = defaultOutputEngine;
+        _currentOutputEngine = _defaultOutputEngine;
     }
 
     public void Run()
     {
         while (true)
         {
+            ResetOutputEngine();
             PrintUserInputLine();
             var userInput = Console.ReadLine();
             
             var result = HandleUserInput(userInput);
-            if (result != null) _outputEngine.WriteLine(result);
+            if (result != null) _currentOutputEngine.WriteLine(result);
         }
     }
 
-    private  void PrintUserInputLine()
+    private void ResetOutputEngine()
     {
-        _outputEngine.Write("$ ");
+        _currentOutputEngine = _defaultOutputEngine;
     }
+    
+    private void PrintUserInputLine()
+    {
+        _currentOutputEngine.Write("$ ");
+    }
+
 
     private string? HandleUserInput(string? userInput)
     {
@@ -37,12 +46,49 @@ public class CommandParser
         }
 
         var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
+        
+        HandleRedirectOperatorIfPresent(args);
+        
+        return ExecuteCommand(commandWord, args);
+    }
+
+    private void HandleRedirectOperatorIfPresent(List<string?> args)
+    {
+        for (int i = 0; i < args.Count; i++)
+        {
+            if (args[i] == "1>" || args[i] == ">")
+            {
+                if (i + 1 < args.Count && args[i + 1] != null)
+                {
+                    var targetFile = args[i + 1]!;
+                    try
+                    {
+                        _currentOutputEngine = new FileOutputEngine(targetFile);
+                    }
+                    catch (Exception e)
+                    {
+                        _currentOutputEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
+                    }
+                    
+                    // remove operator and file name from args
+                    args.RemoveAt(i + 1);
+                    args.RemoveAt(i);
+                    break;
+                } 
+                
+                _currentOutputEngine.WriteLine("Error: Missing target file for redirection.");
+            }
+        }
+
+    }
+
+    private string? ExecuteCommand(string commandWord, List<string?> args)
+    {
         if (_commandRegistry.IsInCommandRegistry(commandWord))
         {
             return _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
         }
         
-        string? executionResult = _commandRegistry.ExecuteExternalProgramCommand(userInput);
-        return executionResult;
+        return  _commandRegistry.ExecuteExternalProgramCommand(commandWord, args);
     }
 }

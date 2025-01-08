@@ -1,22 +1,24 @@
+using System.Text;
+
 namespace CommandParserApp;
 
 public class CatCommand : ICommand
 {
     public string? Execute(List<string?> args)
     {
-        string? output = null;
+        var outputBuilder = new StringBuilder();
         foreach (var path in args)
         {
             if (File.Exists(path))
             {
-                output += File.ReadAllText(path);
+                outputBuilder.Append(File.ReadAllText(path).TrimEnd());
             }
             else
             {
-                output += $"cat: {path}: No such file or directory";
+                Console.WriteLine($"cat: {path}: No such file or directory");
             }
         }
         
-        return output;
+        return outputBuilder.ToString().TrimEnd();
     }
 }

@@ -14,7 +14,7 @@ public static class CommandParserUtils
     private static bool _inDoubleQuote;
     private static bool _hasBackslash;
 
-    public static (string? commandWord, List<string?> args) ExtractCommandAndArgs(string userInput)
+    public static (string commandWord, List<string?> args) ExtractCommandAndArgs(string userInput)
     {
         ArgumentNullException.ThrowIfNull(userInput);
 

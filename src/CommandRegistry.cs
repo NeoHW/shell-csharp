@@ -44,14 +44,13 @@ public class CommandRegistry
         return !string.IsNullOrEmpty(commandWord) && commandWord != CatCommand && _commands.ContainsKey(commandWord);
     }
     
-    public string? ExecuteExternalProgramCommand(string userInput)
+    public string? ExecuteExternalProgramCommand(string executable, List<string?> args)
     {
-        var (executable, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
         
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
         {
-            return  $"{userInput}: command not found";
+            return  $"{executable}: command not found";
         }
         
         var startInfo = new ProcessStartInfo
