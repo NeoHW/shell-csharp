@@ -26,10 +26,10 @@ public class CommandRegistry
         };
     }
 
-    public void ExecuteShellBuiltInCommand(string? commandWord, List<string?> args)
+    public string? ExecuteShellBuiltInCommand(string? commandWord, List<string?> args)
     {
             var command = _commands[commandWord];
-            command.Execute(args);
+            return command.Execute(args);
     }
 
     public bool IsInCommandRegistry(string? commandWord)
@@ -42,14 +42,14 @@ public class CommandRegistry
         return commandWord != CatCommand && _commands.ContainsKey(commandWord);
     }
     
-    public bool ExecuteExternalProgramCommand(string userInput)
+    public string? ExecuteExternalProgramCommand(string userInput)
     {
         var (executable, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
         
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
         {
-            return false;
+            return  $"{userInput}: command not found";
         }
         
         var startInfo = new ProcessStartInfo
@@ -71,10 +71,10 @@ public class CommandRegistry
         process.WaitForExit();
 
         if (!string.IsNullOrEmpty(output))
-            Console.Write(output);
+            return output;
         if (!string.IsNullOrEmpty(error))
-            Console.Write(error);
-        
-        return true;
+            return error;
+
+        return null;
     }
 }

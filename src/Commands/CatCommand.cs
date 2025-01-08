@@ -2,18 +2,21 @@ namespace CommandParserApp;
 
 public class CatCommand : ICommand
 {
-    public void Execute(List<string?> args)
+    public string? Execute(List<string?> args)
     {
+        string? output = null;
         foreach (var path in args)
         {
             if (File.Exists(path))
             {
-                Console.Write(File.ReadAllText(path));
+                output += File.ReadAllText(path);
             }
             else
             {
-                Console.WriteLine($"cat: {path}: No such file or directory");
+                output += $"cat: {path}: No such file or directory";
             }
         }
+        
+        return output;
     }
 }

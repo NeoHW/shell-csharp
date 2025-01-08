@@ -2,22 +2,23 @@ namespace CommandParserApp;
 
 public class CdCommand : ICommand
 {
-    public void Execute(List<string?> args)
+    public string? Execute(List<string?> args)
     {
         string? directoryPath = args[0];
         try
         {
             string? targetDirectory = ResolveTargetDirectory(directoryPath);
             Directory.SetCurrentDirectory(targetDirectory);
+            return null;
         }
         catch (Exception e)
         {
             if (e is DirectoryNotFoundException or FileNotFoundException)
             {
-                Console.WriteLine($"cd: {directoryPath}: No such file or directory");
+                return $"cd: {directoryPath}: No such file or directory";
             }
-            else
-                throw;
+            
+            throw;
         }  
     }
 

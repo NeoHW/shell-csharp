@@ -12,7 +12,9 @@ public class CommandParser
         {
             PrintUserInputLine();
             var userInput = Console.ReadLine();
-            HandleUserInput(userInput);
+            
+            var result = HandleUserInput(userInput);
+            if (result != null) Console.WriteLine(result);
         }
     }
 
@@ -21,36 +23,20 @@ public class CommandParser
         Console.Write("$ ");
     }
 
-    private void HandleUserInput(string? userInput)
+    private string? HandleUserInput(string? userInput)
     {
         if (string.IsNullOrWhiteSpace(userInput))
         {
-            Console.WriteLine("No command entered. Please try again.");
-            return;
+            return "No command entered. Please try again.";
         }
 
         var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
         if (_commandRegistry.IsInCommandRegistry(commandWord))
         {
-            _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
+            return _commandRegistry.ExecuteShellBuiltInCommand(commandWord, args);
         }
-        else
-        {
-            bool executionResult = _commandRegistry.ExecuteExternalProgramCommand(userInput);
-            HandleExecutionResult(executionResult, userInput);
-        }
-    }
-
-    private static void HandleExecutionResult(bool executionResult, string userInput)
-    {
-        if (!executionResult)
-        {
-            HandleCommandNotFound(userInput);
-        }
-    }
-    
-    private static void HandleCommandNotFound(string commandWord)
-    {
-        Console.WriteLine($"{commandWord}: command not found");
+        
+        string? executionResult = _commandRegistry.ExecuteExternalProgramCommand(userInput);
+        return executionResult;
     }
 }
