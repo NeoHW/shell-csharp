@@ -20,6 +20,6 @@ public class CatCommand : ICommand
             }
         }
         
-        return (errorBuilder.ToString().TrimEnd(), outputBuilder.ToString().TrimEnd());
+        return (outputBuilder.ToString().TrimEnd(), errorBuilder.ToString().TrimEnd());
     }
 }

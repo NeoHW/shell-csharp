@@ -70,6 +70,11 @@ public class CommandRegistry
 
         process.WaitForExit();
 
-        return (output, error);
+        if (error != string.Empty)
+        {
+           return (null, error); 
+        }
+
+        return (output, null);
     }
 }

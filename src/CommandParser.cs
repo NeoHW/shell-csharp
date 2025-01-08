@@ -59,30 +59,69 @@ public class CommandParser
     {
         for (int i = 0; i < args.Count; i++)
         {
-            if (args[i] == "1>" || args[i] == ">")
+            switch (args[i])
             {
-                if (i + 1 < args.Count && args[i + 1] != null)
-                {
-                    var targetFile = args[i + 1]!;
-                    try
-                    {
-                        _currentOutputEngine = new FileOutputEngine(targetFile);
-                    }
-                    catch (Exception e)
-                    {
-                        _currentOutputEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
-                    }
-                    
-                    // remove operator and file name from args
-                    args.RemoveAt(i + 1);
-                    args.RemoveAt(i);
+                case "1>":
+                case ">":
+                    HandleOutputRedirection(args, i);
                     break;
-                } 
                 
-                _currentOutputEngine.WriteLine("Error: Missing target file for output redirection.");
+                case "2>":
+                    HandleErrorRedirection(args, i);
+                    break;
             }
         }
 
+    }
+
+    private void HandleOutputRedirection(List<string?> args, int i)
+    {
+        if (i + 1 < args.Count && args[i + 1] != null)
+        {
+            var targetFile = args[i + 1]!;
+            try
+            {
+                _currentOutputEngine = new FileOutputEngine(targetFile);
+            }
+            catch (Exception e)
+            {
+                _currentOutputEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
+            }
+                    
+            RemoveOperatorAndFileName(args, i);
+        }
+        else
+        {
+            _currentOutputErrorEngine.WriteLine("Error: Missing target file for output redirection.");
+        }
+    }
+
+    private void HandleErrorRedirection(List<string?> args, int i)
+    {
+        if (i + 1 < args.Count && args[i + 1] != null)
+        {
+            var targetFile = args[i + 1]!;
+            try
+            {
+                _currentOutputErrorEngine = new FileOutputEngine(targetFile);
+            }
+            catch (Exception e)
+            {
+                _currentOutputErrorEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
+            }
+                    
+            RemoveOperatorAndFileName(args, i);
+        }
+        else
+        {
+            _currentOutputErrorEngine.WriteLine("Error: Missing target file for output redirection.");
+        }
+    }
+
+    private static void RemoveOperatorAndFileName(List<string?> args, int i)
+    {
+        args.RemoveAt(i + 1);
+        args.RemoveAt(i);
     }
 
     private (string? output, string? error) ExecuteCommand(string commandWord, List<string?> args)
