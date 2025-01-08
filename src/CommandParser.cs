@@ -12,27 +12,27 @@ public class CommandParser
     public CommandParser(IOutputEngine defaultOutputEngine)
     {
         _defaultOutputEngine = defaultOutputEngine;
-        _currentOutputEngine = _defaultOutputEngine;
-        _currentOutputErrorEngine = _defaultOutputEngine;
+        ResetEngines();
     }
 
     public void Run()
     {
         while (true)
         {
-            ResetOutputEngine();
+            ResetEngines();
             PrintUserInputLine();
             var userInput = Console.ReadLine();
             
             var (result, error)  = HandleUserInput(userInput);
-            if (result != null) _currentOutputEngine.WriteLine(result);
-            if (error != null) _currentOutputErrorEngine.WriteLine(error);
+            WriteOutput(result, _currentOutputEngine);
+            WriteOutput(error, _currentOutputErrorEngine);
         }
     }
 
-    private void ResetOutputEngine()
+    private void ResetEngines()
     {
         _currentOutputEngine = _defaultOutputEngine;
+        _currentOutputErrorEngine = _defaultOutputEngine;
     }
     
     private void PrintUserInputLine()
@@ -49,72 +49,50 @@ public class CommandParser
         }
 
         var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
-        
-        HandleRedirectOperatorIfPresent(args);
-        
+        HandleRedirection(args);
         return ExecuteCommand(commandWord, args);
     }
 
-    private void HandleRedirectOperatorIfPresent(List<string?> args)
+    private void HandleRedirection(List<string?> args)
     {
-        for (int i = 0; i < args.Count; i++)
+        for (int i = 0; i < args.Count; ++i)
         {
-            switch (args[i])
+            var operatorType = args[i];
+            if (operatorType is "1>" or ">" or "2>")
             {
-                case "1>":
-                case ">":
-                    HandleOutputRedirection(args, i);
-                    break;
-                
-                case "2>":
-                    HandleErrorRedirection(args, i);
-                    break;
+                var isErrorRedirection = operatorType == "2>";
+                if (i + 1 < args.Count && args[i + 1] != null)
+                {
+                    var targetFile = args[i + 1]!;
+                    RedirectStream(targetFile, isErrorRedirection);
+                    RemoveOperatorAndFileName(args, i);
+                }
+                else
+                {
+                    WriteOutput("Error: Missing target file for redirection.", _currentOutputErrorEngine);
+                }
             }
-        }
-
-    }
-
-    private void HandleOutputRedirection(List<string?> args, int i)
-    {
-        if (i + 1 < args.Count && args[i + 1] != null)
-        {
-            var targetFile = args[i + 1]!;
-            try
-            {
-                _currentOutputEngine = new FileOutputEngine(targetFile);
-            }
-            catch (Exception e)
-            {
-                _currentOutputEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
-            }
-                    
-            RemoveOperatorAndFileName(args, i);
-        }
-        else
-        {
-            _currentOutputErrorEngine.WriteLine("Error: Missing target file for output redirection.");
         }
     }
 
-    private void HandleErrorRedirection(List<string?> args, int i)
+    private void RedirectStream(string targetFile, bool isErrorStream)
     {
-        if (i + 1 < args.Count && args[i + 1] != null)
+        try
         {
-            var targetFile = args[i + 1]!;
-            try
+            var outputEngine = new FileOutputEngine(targetFile);
+            if (isErrorStream)
             {
-                _currentOutputErrorEngine = new FileOutputEngine(targetFile);
+                _currentOutputErrorEngine = outputEngine;
             }
-            catch (Exception e)
+            else
             {
-                _currentOutputErrorEngine.WriteLine($"Error: Unable to redirect output to file '{targetFile}': {e.Message}");
+                _currentOutputEngine = outputEngine;
             }
-                    
-            RemoveOperatorAndFileName(args, i);
         }
-        else
+        catch (Exception e)
         {
-            _currentOutputErrorEngine.WriteLine("Error: Missing target file for output redirection.");
+            var errorMsg = $"Error: Unable to redirect to file '{targetFile}': {e.Message}";
+            WriteOutput(errorMsg, _currentOutputErrorEngine);
         }
     }
 
@@ -122,6 +100,14 @@ public class CommandParser
     {
         args.RemoveAt(i + 1);
         args.RemoveAt(i);
+    }
+    
+    private static void WriteOutput(string? message, IOutputEngine outputEngine)
+    {
+        if (!string.IsNullOrEmpty(message))
+        {
+            outputEngine.WriteLine(message);
+        }
     }
 
     private (string? output, string? error) ExecuteCommand(string commandWord, List<string?> args)
