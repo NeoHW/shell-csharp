@@ -66,8 +66,8 @@ public class CommandRegistry
         using var process = new Process { StartInfo = startInfo };
         process.Start();
         
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
+        var output = process.StandardOutput.ReadToEnd().Trim();
+        var error = process.StandardError.ReadToEnd().Trim();
 
         process.WaitForExit();
 
