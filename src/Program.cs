@@ -4,7 +4,8 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        var parser = new CommandParser();
+        IOutputEngine outputEngine = new ConsoleOutputEngine();
+        var parser = new CommandParser(outputEngine);
         parser.Run();
     }
 }

@@ -5,6 +5,12 @@ namespace CommandParserApp;
 public class CommandParser
 {
     private readonly CommandRegistry _commandRegistry = new();
+    private readonly IOutputEngine _outputEngine;
+
+    public CommandParser(IOutputEngine outputEngine)
+    {
+        _outputEngine = outputEngine;
+    }
 
     public void Run()
     {
@@ -14,13 +20,13 @@ public class CommandParser
             var userInput = Console.ReadLine();
             
             var result = HandleUserInput(userInput);
-            if (result != null) Console.WriteLine(result);
+            if (result != null) _outputEngine.WriteLine(result);
         }
     }
 
-    private static void PrintUserInputLine()
+    private  void PrintUserInputLine()
     {
-        Console.Write("$ ");
+        _outputEngine.Write("$ ");
     }
 
     private string? HandleUserInput(string? userInput)
