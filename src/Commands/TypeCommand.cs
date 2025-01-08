@@ -4,27 +4,28 @@ namespace CommandParserApp;
 
 public class TypeCommand(CommandRegistry commandRegistry) : ICommand
 {
-    public string? Execute(List<string?> args)
+    public (string? output, string? error) Execute(List<string?> args)
     {
-        string? resultToReturn = null;
+        string? output = null;
+        string? error = null;
         var commandToCheck = args[0];
         
         if (commandRegistry.IsShellBuiltInCommand(commandToCheck))
         {
-            resultToReturn = $"{commandToCheck} is a shell builtin";
+            output = $"{commandToCheck} is a shell builtin";
         }
         else
         {
             string? executablePath = PathResolver.FindExecutableInPath(commandToCheck);
             if (executablePath != null)
             {
-                resultToReturn = $"{commandToCheck} is {executablePath}";
+                output = $"{commandToCheck} is {executablePath}";
             }
             else
             {
-                resultToReturn = $"{commandToCheck}: not found";
+                error = $"{commandToCheck}: not found";
             }
         }
-        return resultToReturn; 
+        return (output, error); 
     }
 }

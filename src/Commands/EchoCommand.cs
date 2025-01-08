@@ -2,8 +2,9 @@ namespace CommandParserApp;
 
 public class EchoCommand : ICommand
 {
-    public string? Execute(List<string?> args)
+    public (string? output, string? error) Execute(List<string?> args)
     {
-        return string.Join(" ", args);
+        var output = string.Join(" ", args);
+        return (output, null);
     }
 }

@@ -7,11 +7,13 @@ public class CommandParser
     private readonly CommandRegistry _commandRegistry = new();
     private readonly IOutputEngine _defaultOutputEngine;
     private IOutputEngine _currentOutputEngine;
+    private IOutputEngine _currentOutputErrorEngine;
 
     public CommandParser(IOutputEngine defaultOutputEngine)
     {
         _defaultOutputEngine = defaultOutputEngine;
         _currentOutputEngine = _defaultOutputEngine;
+        _currentOutputErrorEngine = _defaultOutputEngine;
     }
 
     public void Run()
@@ -22,8 +24,9 @@ public class CommandParser
             PrintUserInputLine();
             var userInput = Console.ReadLine();
             
-            var result = HandleUserInput(userInput);
+            var (result, error)  = HandleUserInput(userInput);
             if (result != null) _currentOutputEngine.WriteLine(result);
+            if (error != null) _currentOutputErrorEngine.WriteLine(error);
         }
     }
 
@@ -38,11 +41,11 @@ public class CommandParser
     }
 
 
-    private string? HandleUserInput(string? userInput)
+    private (string? output, string? error) HandleUserInput(string? userInput)
     {
         if (string.IsNullOrWhiteSpace(userInput))
         {
-            return "No command entered. Please try again.";
+            return (null, "No command entered. Please try again.");
         }
 
         var (commandWord, args) = CommandParserUtils.ExtractCommandAndArgs(userInput);
@@ -76,13 +79,13 @@ public class CommandParser
                     break;
                 } 
                 
-                _currentOutputEngine.WriteLine("Error: Missing target file for redirection.");
+                _currentOutputEngine.WriteLine("Error: Missing target file for output redirection.");
             }
         }
 
     }
 
-    private string? ExecuteCommand(string commandWord, List<string?> args)
+    private (string? output, string? error) ExecuteCommand(string commandWord, List<string?> args)
     {
         if (_commandRegistry.IsInCommandRegistry(commandWord))
         {

@@ -4,9 +4,10 @@ namespace CommandParserApp;
 
 public class CatCommand : ICommand
 {
-    public string? Execute(List<string?> args)
+    public (string? output, string? error) Execute(List<string?> args)
     {
         var outputBuilder = new StringBuilder();
+        var errorBuilder = new StringBuilder();
         foreach (var path in args)
         {
             if (File.Exists(path))
@@ -15,10 +16,10 @@ public class CatCommand : ICommand
             }
             else
             {
-                Console.WriteLine($"cat: {path}: No such file or directory");
+                errorBuilder.Append($"cat: {path}: No such file or directory");
             }
         }
         
-        return outputBuilder.ToString().TrimEnd();
+        return (errorBuilder.ToString().TrimEnd(), outputBuilder.ToString().TrimEnd());
     }
 }

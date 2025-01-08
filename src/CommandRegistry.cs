@@ -26,9 +26,9 @@ public class CommandRegistry
         };
     }
 
-    public string? ExecuteShellBuiltInCommand(string? commandWord, List<string?> args)
+    public (string? output, string? error) ExecuteShellBuiltInCommand(string? commandWord, List<string?> args)
     {
-            if (commandWord is null) return null;
+            if (commandWord is null) return (null, null);
             
             var command = _commands[commandWord];
             return command.Execute(args);
@@ -44,13 +44,12 @@ public class CommandRegistry
         return !string.IsNullOrEmpty(commandWord) && commandWord != CatCommand && _commands.ContainsKey(commandWord);
     }
     
-    public string? ExecuteExternalProgramCommand(string executable, List<string?> args)
+    public (string? output, string? error) ExecuteExternalProgramCommand(string executable, List<string?> args)
     {
-        
         string? executablePath = PathResolver.FindExecutableInPath(executable);
         if (executablePath == null)
         {
-            return  $"{executable}: command not found";
+            return (null, $"{executable}: command not found");
         }
         
         var startInfo = new ProcessStartInfo
@@ -71,11 +70,6 @@ public class CommandRegistry
 
         process.WaitForExit();
 
-        if (!string.IsNullOrEmpty(output))
-            return output;
-        if (!string.IsNullOrEmpty(error))
-            return error;
-
-        return null;
+        return (output, error);
     }
 }
