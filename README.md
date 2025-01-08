@@ -76,6 +76,10 @@ The shell is designed following clean coding principles:
    ```bash
    dotnet run
    ```
+4. Alternatively, if you have installed .NET using HomeBrew, use the provided `shell.sh` script for easier execution.
+   ```
+   ./shell.sh
+   ```
 
 ## Usage
 
