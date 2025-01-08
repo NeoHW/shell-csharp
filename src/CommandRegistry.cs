@@ -11,11 +11,11 @@ public class CommandRegistry
     private const string PwdCommand = "pwd"; 
     private const string CdCommand = "cd"; 
     private const string CatCommand = "cat"; 
-    private readonly Dictionary<string?, ICommand> _commands;
+    private readonly Dictionary<string, ICommand> _commands;
 
     public CommandRegistry()
     {
-        _commands = new Dictionary<string?, ICommand>(StringComparer.OrdinalIgnoreCase)
+        _commands = new Dictionary<string, ICommand>(StringComparer.OrdinalIgnoreCase)
         {
             { ExitCommand, new ExitCommand() },
             { EchoCommand, new EchoCommand() },
@@ -28,18 +28,20 @@ public class CommandRegistry
 
     public string? ExecuteShellBuiltInCommand(string? commandWord, List<string?> args)
     {
+            if (commandWord is null) return null;
+            
             var command = _commands[commandWord];
             return command.Execute(args);
     }
 
     public bool IsInCommandRegistry(string? commandWord)
     {
-        return _commands.ContainsKey(commandWord);
+        return !string.IsNullOrWhiteSpace(commandWord) && _commands.ContainsKey(commandWord);
     }
     
     public bool IsShellBuiltInCommand(string? commandWord)
     {
-        return commandWord != CatCommand && _commands.ContainsKey(commandWord);
+        return !string.IsNullOrEmpty(commandWord) && commandWord != CatCommand && _commands.ContainsKey(commandWord);
     }
     
     public string? ExecuteExternalProgramCommand(string userInput)

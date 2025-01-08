@@ -4,11 +4,11 @@ public class CdCommand : ICommand
 {
     public string? Execute(List<string?> args)
     {
-        string? directoryPath = args[0];
+        var directoryPath = args[0];
         try
         {
-            string? targetDirectory = ResolveTargetDirectory(directoryPath);
-            Directory.SetCurrentDirectory(targetDirectory);
+            var targetDirectory = ResolveTargetDirectory(directoryPath);
+            if (targetDirectory != null) Directory.SetCurrentDirectory(targetDirectory);
             return null;
         }
         catch (Exception e)

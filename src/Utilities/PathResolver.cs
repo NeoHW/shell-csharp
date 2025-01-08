@@ -4,6 +4,8 @@ public static class PathResolver
 {
     public static string? FindExecutableInPath(string? executableName)
     {
+        if (executableName == null) return null;
+        
         // Search for command in directories listed in Shell Path
         string? pathEnv = Environment.GetEnvironmentVariable("PATH");
         if (string.IsNullOrEmpty(pathEnv))
@@ -14,9 +16,9 @@ public static class PathResolver
             
         // https://unix.stackexchange.com/questions/332948/how-does-lookup-in-path-work-under-the-hood
         string[] pathDirectories = pathEnv.Split(Path.PathSeparator);
-        foreach (string directory in pathDirectories)
+        foreach (var directory in pathDirectories)
         {
-            string fullPath = Path.Combine(directory, executableName);
+            var fullPath = Path.Combine(directory, executableName);
             if (File.Exists(fullPath))
             {
                 return fullPath;
