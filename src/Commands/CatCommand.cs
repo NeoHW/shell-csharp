@@ -7,7 +7,7 @@ public class CatCommand : ICommand
     public (string? output, string? error) Execute(List<string?> args)
     {
         var outputBuilder = new StringBuilder();
-        var errorBuilder = new StringBuilder();
+        string? error = null;
         foreach (var path in args)
         {
             if (File.Exists(path))
@@ -16,10 +16,10 @@ public class CatCommand : ICommand
             }
             else
             {
-                errorBuilder.Append($"cat: {path}: No such file or directory");
+                error = $"cat: {path}: No such file or directory";
             }
         }
         
-        return (outputBuilder.ToString().TrimEnd(), errorBuilder.ToString().TrimEnd());
+        return (outputBuilder.ToString().TrimEnd(), error);
     }
 }
